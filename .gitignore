@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+*.env
+
+# Node
+node_modules/
+dist/
+.ds_store
+
+# Data & Storage
+data/sample_videos/*.mp4
+!data/sample_videos/.gitkeep
+data/vector_db/
+
+# IDE & OS
+.vscode/
+.idea/
+Thumbs.db

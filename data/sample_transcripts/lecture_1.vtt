@@ -1,0 +1,10 @@
+WEBVTT
+
+00:00.000 --> 05:00.000
+Welcome to Machine Learning Systems Design. Today we discuss timestamp-aware vector retrieval and multi-resource grounding.
+
+05:00.000 --> 18:42.000
+When building interactive learning assistants, timestamp boundary enforcement prevents revealing future lecture content. The retriever filters documents where start_time <= current_time (e.g. 18:42).
+
+18:42.000 --> 30:00.000
+Next section: Advanced graph retrieval, AWS Neptune integration, and cost optimization techniques for enterprise scale.
