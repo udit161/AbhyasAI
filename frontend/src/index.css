@@ -18,7 +18,7 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-main);
   font-family: var(--font-family);
   min-height: 100vh;
@@ -45,3 +45,5 @@ button:hover {
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+

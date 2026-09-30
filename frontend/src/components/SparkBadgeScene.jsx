@@ -1,9 +1,9 @@
-﻿import { SparkBadge } from './shaders/spark-badge/SparkBadge';
-import './shaders/threeui.css';
+﻿import { SparkBadge } from "../shaders/spark-badge/SparkBadge";
+import "../shaders/threeui.css";
 
-export default function App() {
+export function Scene() {
   return (
-    <div style={{ position: 'fixed', inset: 0 }}>
+    <div className="shader-frame">
       <SparkBadge
         speed={1.00}
         particleAmount={1.00}
