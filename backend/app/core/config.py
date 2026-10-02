@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     CORS_ORIGINS: List[str] = ["*"]
 
+    # Database Configuration (SQLAlchemy / PostgreSQL / SQLite)
+    DATABASE_URL: str = Field(
+        default="sqlite:///./abhyas_ai.db",
+        description="SQLAlchemy database connection URL (PostgreSQL or SQLite)",
+    )
+
+
     # AWS Credentials & Bedrock Configuration
     AWS_REGION: str = Field(default="us-east-1", description="AWS Region")
     AWS_ACCESS_KEY_ID: Optional[str] = Field(default=None, description="AWS Access Key ID")

@@ -1,5 +1,5 @@
 """
-Pydantic data models and API schemas.
+Pydantic data models, SQLAlchemy ORM models, and Vector database schemas.
 """
 from app.models.schemas import (
     SourceCitation,
@@ -15,8 +15,16 @@ from app.models.schemas import (
     CandidateAnswerRequest,
     InterviewScorecardResponse,
 )
+from app.models.db_models import User, Course, Video, SessionHistory
+from app.models.vector_schema import (
+    VectorMetadata,
+    VectorDocument,
+    VectorFilterQuery,
+    ResourceType,
+)
 
 __all__ = [
+    # Schemas
     "SourceCitation",
     "QuestionRequest",
     "AnswerResponse",
@@ -29,4 +37,14 @@ __all__ = [
     "InterviewQuestionResponse",
     "CandidateAnswerRequest",
     "InterviewScorecardResponse",
+    # DB Models
+    "User",
+    "Course",
+    "Video",
+    "SessionHistory",
+    # Vector Schema
+    "VectorMetadata",
+    "VectorDocument",
+    "VectorFilterQuery",
+    "ResourceType",
 ]
