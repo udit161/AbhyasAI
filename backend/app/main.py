@@ -1,18 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
 from app.routers import health, chat
 
 # Initialize FastAPI application
 app = FastAPI(
-    title="AI Learning Assistant API",
-    description="Phase 1 Python FastAPI Backend for AI Learning Assistant Hackathon Project",
-    version="1.0.0"
+    title=settings.APP_NAME,
+    description="Python FastAPI Backend for AI Learning Assistant & Mock Interview Platform",
+    version="1.0.0",
+    debug=settings.DEBUG,
 )
 
-# Configure CORS middleware (allows frontend client interaction)
+# Configure CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,12 +30,13 @@ def read_root():
     Root endpoint welcome message and helpful links.
     """
     return {
-        "project": "AI Learning Assistant API",
-        "phase": "Phase 1 - Core Backend & Mock Q&A",
+        "project": settings.APP_NAME,
+        "environment": settings.ENVIRONMENT,
         "documentation": "/docs",
         "health_check": "/health"
     }
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host=settings.HOST, port=settings.PORT, reload=settings.DEBUG)
+
