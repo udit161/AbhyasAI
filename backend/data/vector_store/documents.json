@@ -1,210 +1,6 @@
 [
   {
-    "id": "vid_test_vid_pipeline_999_seg_0",
-    "content": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-      "start_time": 0.0,
-      "end_time": 140.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 0
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_1",
-    "content": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 90.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 1
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_2",
-    "content": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 140.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 2
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_0",
-    "content": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-      "start_time": 0.0,
-      "end_time": 140.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 0
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_1",
-    "content": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 90.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 1
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_2",
-    "content": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 140.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 2
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_vid_demo_101_seg_0",
-    "content": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-    "metadata": {
-      "resource_id": "vid_demo_101",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "RAG Systems & Transcript Chunking",
-      "text_chunk": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-      "start_time": 0.0,
-      "end_time": 140.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 0
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_vid_demo_101_seg_1",
-    "content": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "vid_demo_101",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "RAG Systems & Transcript Chunking",
-      "text_chunk": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 90.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 1
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_vid_demo_101_seg_2",
-    "content": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "vid_demo_101",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "RAG Systems & Transcript Chunking",
-      "text_chunk": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 140.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 2
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_0",
-    "content": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation. RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores. When processing video transcripts, grouping timestamps into sliding windows maintains continuous context. Each window preserves the precise start time and end time metadata for exact playback timestamp grounding.",
-      "start_time": 0.0,
-      "end_time": 140.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 0
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_1",
-    "content": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding. Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 90.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 1
-    },
-    "embedding": null
-  },
-  {
-    "id": "vid_test_vid_pipeline_999_seg_2",
-    "content": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-    "metadata": {
-      "resource_id": "test_vid_pipeline_999",
-      "course_id": null,
-      "resource_type": "video",
-      "title": "Sample RAG Architecture Lecture",
-      "text_chunk": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone. Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds.",
-      "start_time": 140.0,
-      "end_time": 260.0,
-      "page_number": null,
-      "slide_index": null,
-      "chunk_index": 2
-    },
-    "embedding": null
-  },
-  {
-    "id": "ppt_test_ppt_202_sld_1",
+    "id": "ppt_test_ppt_202_sld_1_sub_0",
     "content": "Slide 1: Gradient Descent Principles",
     "metadata": {
       "resource_id": "test_ppt_202",
@@ -221,7 +17,7 @@
     "embedding": null
   },
   {
-    "id": "ppt_test_ppt_202_sld_2",
+    "id": "ppt_test_ppt_202_sld_2_sub_0",
     "content": "Slide 2: Vector Embedding and Similarity Search",
     "metadata": {
       "resource_id": "test_ppt_202",
@@ -285,6 +81,91 @@
       "page_number": null,
       "slide_index": null,
       "chunk_index": 2
+    },
+    "embedding": null
+  },
+  {
+    "id": "vid_test_vid_timestamp_check_seg_0",
+    "content": "Segment 1: Overview of RAG architecture fundamentals.",
+    "metadata": {
+      "resource_id": "test_vid_timestamp_check",
+      "course_id": null,
+      "resource_type": "video",
+      "title": "Lecture on RAG System Design",
+      "text_chunk": "Segment 1: Overview of RAG architecture fundamentals.",
+      "start_time": 0.0,
+      "end_time": 600.0,
+      "page_number": null,
+      "slide_index": null,
+      "chunk_index": 0
+    },
+    "embedding": null
+  },
+  {
+    "id": "vid_test_vid_timestamp_check_seg_1",
+    "content": "Segment 2: Timestamp filtering and boundary enforcement in vector store.",
+    "metadata": {
+      "resource_id": "test_vid_timestamp_check",
+      "course_id": null,
+      "resource_type": "video",
+      "title": "Lecture on RAG System Design",
+      "text_chunk": "Segment 2: Timestamp filtering and boundary enforcement in vector store.",
+      "start_time": 600.0,
+      "end_time": 1120.0,
+      "page_number": null,
+      "slide_index": null,
+      "chunk_index": 1
+    },
+    "embedding": null
+  },
+  {
+    "id": "vid_test_vid_timestamp_check_seg_2",
+    "content": "Segment 3: Advanced future topic spoiler about graph neural networks.",
+    "metadata": {
+      "resource_id": "test_vid_timestamp_check",
+      "course_id": null,
+      "resource_type": "video",
+      "title": "Lecture on RAG System Design",
+      "text_chunk": "Segment 3: Advanced future topic spoiler about graph neural networks.",
+      "start_time": 1122.0,
+      "end_time": 1800.0,
+      "page_number": null,
+      "slide_index": null,
+      "chunk_index": 2
+    },
+    "embedding": null
+  },
+  {
+    "id": "vid_test_vid_with_doc_seg_0",
+    "content": "Video introduction to database queries.",
+    "metadata": {
+      "resource_id": "test_vid_with_doc",
+      "course_id": null,
+      "resource_type": "video",
+      "title": "Video Lecture",
+      "text_chunk": "Video introduction to database queries.",
+      "start_time": 0.0,
+      "end_time": 300.0,
+      "page_number": null,
+      "slide_index": null,
+      "chunk_index": 0
+    },
+    "embedding": null
+  },
+  {
+    "id": "pdf_test_pdf_cheatsheet_pg_5",
+    "content": "Supporting CheatSheet: Query optimization techniques.",
+    "metadata": {
+      "resource_id": "test_pdf_cheatsheet",
+      "course_id": null,
+      "resource_type": "pdf",
+      "title": "RAG Systems CheatSheet PDF",
+      "text_chunk": "Supporting CheatSheet: Query optimization techniques.",
+      "start_time": null,
+      "end_time": null,
+      "page_number": 5,
+      "slide_index": null,
+      "chunk_index": 0
     },
     "embedding": null
   }

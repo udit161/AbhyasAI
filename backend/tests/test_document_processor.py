@@ -74,14 +74,16 @@ def test_ppt_processing_and_ingestion(tmp_path):
     assert result["doc_type"] == "ppt"
     assert result["total_slides_extracted"] == 2
 
-    # Query vector store specifically for slide_index = 2
+    # Query vector store specifically for slide_index = 2 and doc_id
     query_filter = VectorFilterQuery(
         query_text="Similarity Search",
         slide_index=2,
+        allowed_resource_ids=[doc_id],
         resource_types=[ResourceType.PPT]
     )
     search_results = vector_store.query(query_filter)
 
     assert len(search_results) == 1
+
     assert search_results[0]["slide_index"] == 2
     assert "Similarity Search" in search_results[0]["content"]

@@ -61,6 +61,7 @@ class VectorStoreClient:
                 chunk_index=idx,
             )
             doc = VectorDocument(id=doc_id, content=seg["text"], metadata=metadata)
+            self.documents = [d for d in self.documents if d.id != doc_id]
             self.documents.append(doc)
             added_ids.append(doc_id)
 
@@ -80,6 +81,8 @@ class VectorStoreClient:
         added_ids = []
         for idx, pg in enumerate(pages):
             chunk_id = f"pdf_{doc_id}_pg_{pg['page_number']}"
+            if "sub_index" in pg:
+                chunk_id = f"{chunk_id}_sub_{pg['sub_index']}"
             metadata = VectorMetadata(
                 resource_id=doc_id,
                 course_id=course_id,
@@ -90,6 +93,7 @@ class VectorStoreClient:
                 chunk_index=idx,
             )
             doc = VectorDocument(id=chunk_id, content=pg["text"], metadata=metadata)
+            self.documents = [d for d in self.documents if d.id != chunk_id]
             self.documents.append(doc)
             added_ids.append(chunk_id)
 
@@ -109,6 +113,8 @@ class VectorStoreClient:
         added_ids = []
         for idx, sld in enumerate(slides):
             chunk_id = f"ppt_{doc_id}_sld_{sld['slide_index']}"
+            if "sub_index" in sld:
+                chunk_id = f"{chunk_id}_sub_{sld['sub_index']}"
             metadata = VectorMetadata(
                 resource_id=doc_id,
                 course_id=course_id,
@@ -119,11 +125,13 @@ class VectorStoreClient:
                 chunk_index=idx,
             )
             doc = VectorDocument(id=chunk_id, content=sld["text"], metadata=metadata)
+            self.documents = [d for d in self.documents if d.id != chunk_id]
             self.documents.append(doc)
             added_ids.append(chunk_id)
 
         self._save_documents()
         return added_ids
+
 
     def query(self, filter_query: VectorFilterQuery) -> List[Dict[str, Any]]:
         """
@@ -150,16 +158,19 @@ class VectorStoreClient:
             if filter_query.allowed_resource_ids and meta.resource_id not in filter_query.allowed_resource_ids:
                 continue
 
-            # Video Timestamp Filtering
+            # Video Timestamp Filtering (strict boundary enforcement: start_time >= 0 and end_time <= max_timestamp)
             if meta.resource_type == ResourceType.VIDEO:
                 if filter_query.video_id and meta.resource_id != filter_query.video_id:
                     continue
-                if filter_query.max_timestamp is not None and meta.start_time is not None:
-                    if meta.start_time > filter_query.max_timestamp:
+                if meta.start_time is not None and meta.start_time < 0.0:
+                    continue
+                if filter_query.max_timestamp is not None and meta.end_time is not None:
+                    if meta.end_time > filter_query.max_timestamp:
                         continue
                 if filter_query.min_timestamp is not None and meta.end_time is not None:
                     if meta.end_time < filter_query.min_timestamp:
                         continue
+
 
             # PDF Page Number Filtering
             elif meta.resource_type == ResourceType.PDF:
