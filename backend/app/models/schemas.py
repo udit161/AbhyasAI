@@ -26,6 +26,28 @@ class AnswerResponse(BaseModel):
     refusal_reason: Optional[str] = None
     latency_ms: float
 
+class ChatSessionRequest(BaseModel):
+    user_id: str = Field(..., description="ID of the user making the chat request")
+    video_id: str = Field(..., description="ID of the active video being watched")
+    current_timestamp: float = Field(..., ge=0.0, description="Current video playback timestamp in seconds")
+    query: str = Field(..., min_length=1, description="User question or query")
+    course_id: Optional[str] = Field(None, description="Optional Course ID")
+    permitted_doc_ids: Optional[List[str]] = Field(default=[], description="List of permitted supporting PDF/PPT document IDs")
+    conversation_history: Optional[List[Dict[str, str]]] = Field(default=[], description="Optional previous chat history")
+
+class ChatSessionResponse(BaseModel):
+    session_id: str = Field(..., description="Database ID of saved session history record")
+    user_id: str
+    video_id: str
+    query: str
+    answer: str
+    citations: List[SourceCitation]
+    timestamp_range_used: str
+    is_refusal: bool = False
+    refusal_reason: Optional[str] = None
+    latency_ms: float
+
+
 class QuizGenerateRequest(BaseModel):
     video_id: str
     current_timestamp: float
