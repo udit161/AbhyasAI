@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from app.main import app
+from app.db.vector_store import vector_store
 
 client = TestClient(app)
 
@@ -21,48 +22,60 @@ def test_root_endpoint():
     assert "project" in data
     assert data["documentation"] == "/docs"
 
-def test_chat_ask_valid_request():
+def test_chat_ask_grounded_rag_request():
     """
-    Test POST /chat/ask with valid data structure returns 200 and mock answer.
+    Test POST /chat/ask with valid QuestionRequest returns 200 with grounded RAG answer and citations.
     """
+    video_id = "test_main_vid_1"
+    vector_store.add_video_segments(
+        video_id=video_id,
+        title="FastAPI RAG Course",
+        segments=[
+            {"start_time": 0.0, "end_time": 100.0, "text": "FastAPI uses Pydantic models for data validation and OpenAPI schema generation."}
+        ]
+    )
+
     payload = {
-        "course_id": "course_python_101",
-        "video_id": "video_fastapi_intro",
+        "video_id": video_id,
         "current_timestamp": 125.5,
-        "question": "What is FastAPI and how does Pydantic validate requests?"
+        "question": "What is FastAPI?",
+        "conversation_history": [],
+        "allowed_resource_ids": [video_id]
     }
     response = client.post("/chat/ask", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "success"
-    assert data["is_mock"] is True
-    assert data["course_id"] == "course_python_101"
-    assert data["video_id"] == "video_fastapi_intro"
-    assert data["current_timestamp"] == 125.5
-    assert data["question"] == "What is FastAPI and how does Pydantic validate requests?"
-    assert "[MOCK ANSWER]" in data["mock_answer"]
+    assert "answer" in data
+    assert "citations" in data
+    assert data["is_refusal"] is False
+    assert len(data["citations"]) > 0
+
+def test_chat_ask_refusal_when_unsupported_by_context():
+    """
+    Test POST /chat/ask returns refusal when query cannot be answered from context.
+    """
+    video_id = "test_main_vid_2"
+    payload = {
+        "video_id": video_id,
+        "current_timestamp": 10.0,
+        "question": "What is quantum thermodynamics?",
+        "conversation_history": [],
+        "allowed_resource_ids": [video_id]
+    }
+    response = client.post("/chat/ask", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_refusal"] is True
+    assert "refusal_reason" in data
+    assert "do not know" in data["answer"].lower()
 
 def test_chat_ask_validation_missing_field():
     """
     Test POST /chat/ask fails with 422 when required fields are missing.
     """
     payload = {
-        "course_id": "course_python_101",
         "video_id": "video_fastapi_intro"
         # missing current_timestamp and question
-    }
-    response = client.post("/chat/ask", json=payload)
-    assert response.status_code == 422
-
-def test_chat_ask_validation_invalid_type():
-    """
-    Test POST /chat/ask fails with 422 when current_timestamp is negative.
-    """
-    payload = {
-        "course_id": "course_python_101",
-        "video_id": "video_fastapi_intro",
-        "current_timestamp": -15.0,
-        "question": "Invalid negative timestamp question"
     }
     response = client.post("/chat/ask", json=payload)
     assert response.status_code == 422

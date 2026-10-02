@@ -85,6 +85,23 @@
     "embedding": null
   },
   {
+    "id": "vid_test_main_vid_1_seg_0",
+    "content": "FastAPI uses Pydantic models for data validation and OpenAPI schema generation.",
+    "metadata": {
+      "resource_id": "test_main_vid_1",
+      "course_id": null,
+      "resource_type": "video",
+      "title": "FastAPI RAG Course",
+      "text_chunk": "FastAPI uses Pydantic models for data validation and OpenAPI schema generation.",
+      "start_time": 0.0,
+      "end_time": 100.0,
+      "page_number": null,
+      "slide_index": null,
+      "chunk_index": 0
+    },
+    "embedding": null
+  },
+  {
     "id": "vid_test_vid_timestamp_check_seg_0",
     "content": "Segment 1: Overview of RAG architecture fundamentals.",
     "metadata": {
