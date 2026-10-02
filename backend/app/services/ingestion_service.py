@@ -107,5 +107,42 @@ class IngestionService:
             vector_store.add_ppt_slides(doc_id=doc_id, title=title, slides=pages, course_id=course_id)
         return len(pages)
 
+    def ingest_pdf_document(
+        self,
+        file_path: str,
+        doc_id: str,
+        title: str,
+        course_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Extracts PDF pages, chunks text with overlap, tags page_number metadata, and upserts into vector store.
+        """
+        from app.services.document_processor import document_processor
+        return document_processor.process_and_ingest_pdf(
+            file_path=file_path,
+            doc_id=doc_id,
+            title=title,
+            course_id=course_id,
+        )
+
+    def ingest_ppt_document(
+        self,
+        file_path: str,
+        doc_id: str,
+        title: str,
+        course_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Extracts PPT slides, chunks text with overlap, tags slide_number metadata, and upserts into vector store.
+        """
+        from app.services.document_processor import document_processor
+        return document_processor.process_and_ingest_ppt(
+            file_path=file_path,
+            doc_id=doc_id,
+            title=title,
+            course_id=course_id,
+        )
+
 
 ingestion_service = IngestionService()
+
