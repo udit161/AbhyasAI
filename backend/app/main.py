@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.session import engine, Base
-from app.routers import health, chat
+from app.routers import health, chat, interview
 
 # Automatically create database tables if they do not exist
 Base.metadata.create_all(bind=engine)
@@ -28,6 +28,7 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(chat.router, prefix=settings.API_V1_STR)
 app.include_router(chat.router)
+app.include_router(interview.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")

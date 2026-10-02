@@ -80,18 +80,43 @@ class IngestDocumentRequest(BaseModel):
 
 # Mock Interview Schemas
 class InterviewInitRequest(BaseModel):
+    """
+    Request schema for starting a new AI mock interview session.
+    Accepts candidate background, JD, role, and skill level for
+    adaptive opening question generation.
+    """
+    candidate_name: str = Field(..., min_length=1, description="Full name of the candidate")
+    target_role: str = Field(..., min_length=1, description="Job role being interviewed for (e.g. 'Senior ML Engineer')")
+    job_description: Optional[str] = Field(None, description="Full job description text for adaptive tailoring")
+    resume_text: Optional[str] = Field(None, description="Candidate full resume text for deeper context")
+    resume_summary: Optional[str] = Field(None, description="Short resume summary (auto-extracted if resume_text is provided)")
+    course_completed: Optional[str] = Field(None, description="Name of course/curriculum the candidate has completed")
+    skill_level: str = Field("Intermediate", description="Candidate level: Entry, Intermediate, or Senior")
+    interview_type: str = Field("Technical", description="Interview type: Technical, Behavioral, or System Design")
+    user_id: Optional[str] = Field(None, description="Optional authenticated user ID for session persistence")
+
+
+class InterviewStartResponse(BaseModel):
+    """
+    Response schema returned after POST /api/v1/interview/start.
+    Contains the DB session ID and the tailored opening question.
+    """
+    session_id: str = Field(..., description="Unique DB-persisted session ID for subsequent turn API calls")
     candidate_name: str
     target_role: str
-    job_description: Optional[str] = None
-    resume_summary: Optional[str] = None
-    course_completed: Optional[str] = None
-    skill_level: str = "Intermediate" # Entry, Intermediate, Senior
-    interview_type: str = "Technical" # Technical, Behavioral, System Design
+    skill_level: str
+    interview_type: str
+    question_number: int = Field(default=1, description="Always 1 for the opening question")
+    opening_question: str = Field(..., description="AI-generated opening interview question tailored to candidate")
+    resume_summary_used: Optional[str] = Field(None, description="Extracted resume summary the AI used for tailoring")
+    estimated_turns: int = Field(default=5, description="Estimated number of interview questions in the session")
+
 
 class InterviewQuestionResponse(BaseModel):
     session_id: str
     question_number: int
     question: str
+    is_complete: bool = False
     audio_url: Optional[str] = None
 
 class CandidateAnswerRequest(BaseModel):
