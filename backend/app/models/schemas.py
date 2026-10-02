@@ -123,6 +123,9 @@ class CandidateAnswerRequest(BaseModel):
     session_id: str
     answer: str
 
+class InterviewScorecardRequest(BaseModel):
+    session_id: str = Field(..., description="Active or completed interview session ID")
+
 class InterviewScorecardResponse(BaseModel):
     session_id: str
     overall_score: float # 0-100
@@ -134,6 +137,7 @@ class InterviewScorecardResponse(BaseModel):
     improvement_areas: List[str]
     recommendations: List[str]
     estimated_operating_cost: str
+
 
 
 class InterviewRespondRequest(BaseModel):

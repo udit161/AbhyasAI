@@ -22,6 +22,7 @@ from app.models.schemas import (
     InterviewRespondRequest,
     InterviewRespondResponse,
     CandidateAnswerRequest,
+    InterviewScorecardRequest,
     InterviewScorecardResponse,
 )
 from app.services.interview_service import interview_service, InterviewSessionState
@@ -308,6 +309,28 @@ def get_scorecard(
             db.rollback()
 
     return scorecard
+
+
+@router.post(
+    "/scorecard",
+    response_model=InterviewScorecardResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Generate or retrieve the AI-evaluated scorecard for an interview session via POST",
+    description=(
+        "Evaluates the full interview transcript across technical knowledge, communication, "
+        "problem solving, and answer structure dimensions, returning structured JSON scorecard "
+        "with scores, strengths, improvement areas, recommendations, and estimated operating cost."
+    ),
+)
+def post_scorecard(
+    req: InterviewScorecardRequest,
+    db: Session = Depends(get_db),
+) -> InterviewScorecardResponse:
+    """
+    POST /api/v1/interview/scorecard
+    """
+    return get_scorecard(session_id=req.session_id, db=db)
+
 
 
 # ---------------------------------------------------------------------------

@@ -191,6 +191,8 @@ class InterviewSessionState:
     agent_decisions: List[Dict[str, Any]] = field(default_factory=list)
     # Current active topic being explored (used to count probes per topic)
     current_topic: Optional[str] = None
+    # Generated scorecard (populated automatically on completion or on /scorecard call)
+    scorecard: Optional[InterviewScorecardResponse] = None
 
     def to_history_data(self) -> Dict[str, Any]:
         """Serializes session state to the JSON blob stored in SessionHistory.history_data."""
@@ -208,6 +210,7 @@ class InterviewSessionState:
             "covered_topics": self.covered_topics,
             "jd_competencies": self.jd_competencies,
             "agent_decisions": self.agent_decisions,
+            "scorecard": self.scorecard.model_dump() if self.scorecard else None,
         }
 
 
@@ -809,6 +812,126 @@ def _generate_followup_question(session: "InterviewSessionState") -> str:
     return _FOLLOWUP_TEMPLATES[idx]
 
 
+def _calculate_operating_cost(session: "InterviewSessionState") -> str:
+    """
+    Calculates estimated operating LLM cost for the interview session based on transcript length and turn count.
+    Rates: $0.15 / 1M input tokens, $0.60 / 1M output tokens (GPT-4o-mini / Gemini Flash baseline pricing).
+    """
+    candidate_turns = [turn for turn in session.history if turn["role"] == "candidate"]
+    turn_count = max(len(candidate_turns), 1)
+
+    total_history_chars = sum(len(turn["text"]) for turn in session.history)
+    estimated_input_tokens = int(total_history_chars / 4.0) + (turn_count * 550) + 1200
+    estimated_output_tokens = (turn_count * 125) + 350
+    total_tokens = estimated_input_tokens + estimated_output_tokens
+
+    input_cost = (estimated_input_tokens / 1_000_000.0) * 0.15
+    output_cost = (estimated_output_tokens / 1_000_000.0) * 0.60
+    total_cost = input_cost + output_cost
+
+    return f"${total_cost:.4f} USD (~{turn_count} turns, {total_tokens:,} tokens @ $0.15/$0.60 per 1M)"
+
+
+def _deterministic_scorecard_evaluation(session: "InterviewSessionState") -> Dict[str, Any]:
+    """
+    Analyzes the full interview transcript to compute metrics and feedback when LLM API is unavailable.
+    Evaluates transcript across technical knowledge, communication, problem-solving, and answer structure.
+    """
+    candidate_answers = [t["text"] for t in session.history if t["role"] == "candidate"]
+    if not candidate_answers:
+        base = 70.0
+        return {
+            "overall_score": base,
+            "technical_knowledge_score": base,
+            "communication_score": base,
+            "problem_solving_score": base,
+            "answer_structure_score": base,
+            "strengths": ["Interview session initiated."],
+            "improvement_areas": ["Complete at least one interview question turn."],
+            "recommendations": ["Participate in a full mock interview session."],
+        }
+
+    total_words = sum(len(ans.split()) for ans in candidate_answers)
+    avg_words = total_words / len(candidate_answers)
+
+    tech_keywords = [
+        "architecture", "scale", "latency", "throughput", "cache", "redis", "database",
+        "index", "kafka", "pipeline", "async", "lock", "sharding", "microservice",
+        "vector", "embedding", "model", "slo", "metrics", "monitoring", "trade-off",
+        "bottleneck", "algorithm", "complexity", "o(n)", "memory", "concurrency"
+    ]
+    problem_keywords = [
+        "because", "trade-off", "instead", "alternative", "however", "handled",
+        "fallback", "mitigate", "failure", "retry", "circuit breaker", "degrade"
+    ]
+    structure_keywords = [
+        "first", "second", "finally", "situation", "task", "action", "result",
+        "for example", "specifically", "in summary", "overall", "step"
+    ]
+
+    all_text_lower = " ".join(candidate_answers).lower()
+    tech_hits = sum(1 for kw in tech_keywords if kw in all_text_lower)
+    problem_hits = sum(1 for kw in problem_keywords if kw in all_text_lower)
+    structure_hits = sum(1 for kw in structure_keywords if kw in all_text_lower)
+
+    base_map = {"Entry": 72.0, "Intermediate": 78.0, "Senior": 83.0}
+    base = base_map.get(session.skill_level, 76.0)
+
+    tech_score = min(100.0, max(50.0, base + min(tech_hits * 2.5, 15.0)))
+    comm_score = min(100.0, max(50.0, base + (5.0 if avg_words >= 40 else -5.0) + min(structure_hits * 1.5, 8.0)))
+    prob_score = min(100.0, max(50.0, base + min(problem_hits * 3.0, 14.0)))
+    struct_score = min(100.0, max(50.0, base + min(structure_hits * 2.5, 12.0) + (4.0 if avg_words >= 35 else -3.0)))
+
+    overall_score = round(
+        0.35 * tech_score + 0.25 * prob_score + 0.20 * comm_score + 0.20 * struct_score,
+        1
+    )
+
+    strengths = []
+    if tech_score >= 80:
+        strengths.append(f"Strong technical terminology and domain concepts for a {session.target_role}.")
+    else:
+        strengths.append(f"Demonstrated fundamental technical knowledge for {session.target_role}.")
+
+    if prob_score >= 80:
+        strengths.append("Effective reasoning through edge cases and failure mitigation trade-offs.")
+    else:
+        strengths.append("Good willingness to address follow-up probing questions.")
+
+    if comm_score >= 80:
+        strengths.append("Clear, articulate communication with appropriate depth per answer.")
+    else:
+        strengths.append("Professional tone maintained across all interview turns.")
+
+    improvement_areas = []
+    if tech_hits < 4:
+        improvement_areas.append("Incorporate more specific technical metrics (e.g., latency, memory bounds, RPS) into your explanations.")
+    if problem_hits < 3:
+        improvement_areas.append("Explicitly state alternative approaches considered and why you chose your specific solution.")
+    if structure_hits < 2 or avg_words < 30:
+        improvement_areas.append("Use structured answer frameworks (e.g. STAR format or System-Goal-Tradeoff) for conciseness and clarity.")
+
+    if not improvement_areas:
+        improvement_areas.append("Provide concrete baseline benchmarks when discussing system performance optimizations.")
+
+    recommendations = [
+        f"Review core system design and architecture patterns tailored to {session.target_role} roles at {session.skill_level} level.",
+        "Practice answering technical probing questions using the STAR format (Situation, Task, Action, Result).",
+        "Prepare 2-3 detailed project deep-dives highlighting trade-off decisions and quantifiable outcomes.",
+    ]
+
+    return {
+        "overall_score": overall_score,
+        "technical_knowledge_score": round(tech_score, 1),
+        "communication_score": round(comm_score, 1),
+        "problem_solving_score": round(prob_score, 1),
+        "answer_structure_score": round(struct_score, 1),
+        "strengths": strengths,
+        "improvement_areas": improvement_areas,
+        "recommendations": recommendations,
+    }
+
+
 def _generate_scorecard_from_llm(session: "InterviewSessionState") -> Optional[Dict[str, Any]]:
     """Generates a structured scorecard JSON from LLM evaluation of the full transcript."""
     transcript_lines = []
@@ -830,6 +953,7 @@ def _generate_scorecard_from_llm(session: "InterviewSessionState") -> Optional[D
         if parsed:
             return parsed
     return None
+
 
 
 # ---------------------------------------------------------------------------
@@ -944,6 +1068,11 @@ class InterviewService:
                 f"with session_id={session_id} to retrieve your full evaluation."
             )
             session.history.append({"role": "interviewer", "text": closing})
+            # Auto-trigger post-interview scorecard evaluation
+            try:
+                self.generate_scorecard(session_id)
+            except Exception:
+                pass
             return closing, session.question_count, True
 
         next_question = _generate_followup_question(session)
@@ -987,6 +1116,11 @@ class InterviewService:
                 "Retrieve your scorecard at /api/v1/interview/scorecard."
             )
             session.history.append({"role": "interviewer", "text": closing})
+            # Auto-trigger post-interview scorecard evaluation
+            try:
+                self.generate_scorecard(session_id)
+            except Exception:
+                pass
             remaining = [t for t in session.jd_competencies if t not in session.covered_topics]
             return {
                 "question": closing,
@@ -1058,18 +1192,21 @@ class InterviewService:
     # Scorecard Generation
     # ------------------------------------------------------------------
 
-    def generate_scorecard(self, session_id: str) -> InterviewScorecardResponse:
+    def generate_scorecard(self, session_id: str, force_recalculate: bool = False) -> InterviewScorecardResponse:
         """Evaluates the complete interview transcript and returns a structured scorecard."""
         session = self._sessions.get(session_id)
         if not session:
             raise ValueError(f"Interview session '{session_id}' not found.")
 
-        turns = session.question_count
-        est_cost = f"${turns * 1500 * 0.002 / 1000:.4f} (~{turns} turns, GPT-4o-mini pricing)"
+        # Return cached scorecard if already computed
+        if session.scorecard and not force_recalculate:
+            return session.scorecard
+
+        est_cost = _calculate_operating_cost(session)
 
         llm_scorecard = _generate_scorecard_from_llm(session)
         if llm_scorecard:
-            return InterviewScorecardResponse(
+            scorecard = InterviewScorecardResponse(
                 session_id=session_id,
                 overall_score=float(llm_scorecard.get("overall_score", 75.0)),
                 technical_knowledge_score=float(llm_scorecard.get("technical_knowledge_score", 75.0)),
@@ -1081,32 +1218,25 @@ class InterviewService:
                 recommendations=llm_scorecard.get("recommendations", ["Review STAR format for behavioral responses."]),
                 estimated_operating_cost=est_cost,
             )
+            session.scorecard = scorecard
+            return scorecard
 
-        _base = {"Entry": 72.0, "Intermediate": 78.0, "Senior": 82.0}
-        base = _base.get(session.skill_level, 75.0)
-        return InterviewScorecardResponse(
+        eval_data = _deterministic_scorecard_evaluation(session)
+        scorecard = InterviewScorecardResponse(
             session_id=session_id,
-            overall_score=base,
-            technical_knowledge_score=base + 2.0,
-            communication_score=base - 1.5,
-            problem_solving_score=base + 1.0,
-            answer_structure_score=base - 0.5,
-            strengths=[
-                f"Demonstrated knowledge relevant to the {session.target_role} role.",
-                "Maintained clear and professional communication throughout.",
-                "Showed ability to reason through technical trade-offs.",
-            ],
-            improvement_areas=[
-                "Consider using the STAR format more consistently for behavioral questions.",
-                "Provide more specific metrics and outcomes when describing past projects.",
-            ],
-            recommendations=[
-                f"Study system design patterns relevant to {session.target_role} at {session.skill_level} level.",
-                "Practice timed mock interviews to improve response conciseness.",
-                "Review common failure modes and mitigation strategies in distributed systems.",
-            ],
+            overall_score=eval_data["overall_score"],
+            technical_knowledge_score=eval_data["technical_knowledge_score"],
+            communication_score=eval_data["communication_score"],
+            problem_solving_score=eval_data["problem_solving_score"],
+            answer_structure_score=eval_data["answer_structure_score"],
+            strengths=eval_data["strengths"],
+            improvement_areas=eval_data["improvement_areas"],
+            recommendations=eval_data["recommendations"],
             estimated_operating_cost=est_cost,
         )
+        session.scorecard = scorecard
+        return scorecard
+
 
     # ------------------------------------------------------------------
     # State Access Helpers
