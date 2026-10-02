@@ -1,0 +1,32 @@
+[
+  {
+    "start": 0.0,
+    "end": 15.0,
+    "text": "Welcome to the Fullstack AI Engineering course. In this lecture, we explore retrieval augmented generation."
+  },
+  {
+    "start": 15.0,
+    "end": 45.0,
+    "text": "RAG enables LLMs to access domain knowledge without full fine-tuning by searching vector database stores."
+  },
+  {
+    "start": 45.0,
+    "end": 90.0,
+    "text": "When processing video transcripts, grouping timestamps into sliding windows maintains continuous context."
+  },
+  {
+    "start": 90.0,
+    "end": 140.0,
+    "text": "Each window preserves the precise start time and end time metadata for exact playback timestamp grounding."
+  },
+  {
+    "start": 140.0,
+    "end": 200.0,
+    "text": "Vector embeddings are generated for each chunk and indexed into vector database collections like Chroma or Pinecone."
+  },
+  {
+    "start": 200.0,
+    "end": 260.0,
+    "text": "Finally, when the user asks a question at timestamp 02:15, retriever filters chunks where start_time <= 135 seconds."
+  }
+]
