@@ -3,7 +3,8 @@ Interview Router — AI Mock Interview Session Endpoints
 ======================================================
 Endpoints:
   POST /api/v1/interview/start    — Initialize session, return tailored opening question
-  POST /api/v1/interview/answer   — Submit candidate answer, receive next question
+  POST /api/v1/interview/answer   — Submit candidate answer, receive next question (simple adaptive)
+  POST /api/v1/interview/respond  — Dynamic agent: PROBE vs TRANSITION decision with full trace
   GET  /api/v1/interview/scorecard/{session_id} — Retrieve evaluation scorecard
   GET  /api/v1/interview/session/{session_id}   — Retrieve full session transcript
 """
@@ -18,12 +19,15 @@ from app.models.schemas import (
     InterviewInitRequest,
     InterviewStartResponse,
     InterviewQuestionResponse,
+    InterviewRespondRequest,
+    InterviewRespondResponse,
     CandidateAnswerRequest,
     InterviewScorecardResponse,
 )
 from app.services.interview_service import interview_service, InterviewSessionState
 
 router = APIRouter(prefix="/interview", tags=["Mock Interview"])
+
 
 
 # ---------------------------------------------------------------------------
@@ -156,6 +160,100 @@ def submit_answer(
         question_number=question_num,
         question=next_question,
         is_complete=is_complete,
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST /api/v1/interview/respond  — Dynamic Agent (PROBE vs TRANSITION)
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/respond",
+    response_model=InterviewRespondResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Dynamic interview agent — PROBE deeper or TRANSITION to a new topic",
+    description=(
+        "The AI agent analyzes the candidate's answer across quality, depth, and JD alignment. "
+        "It decides in real-time whether to:\n"
+        "- **PROBE**: drill deeper into architectural choices, failure handling, trade-offs, or scalability "
+        "on the current topic when the answer is vague or reveals an untested dimension.\n"
+        "- **TRANSITION**: move to the next uncovered JD competency when the answer is thorough "
+        "or the topic has been sufficiently explored (probed 2+ times).\n\n"
+        "Returns the next question alongside the full decision trace: reasoning, answer quality assessment, "
+        "probe target, topic coverage progress, and remaining competencies."
+    ),
+)
+def respond_to_answer(
+    req: InterviewRespondRequest,
+    db: Session = Depends(get_db),
+) -> InterviewRespondResponse:
+    """
+    POST /api/v1/interview/respond
+
+    Agent flow per turn:
+      1. Validate session is active.
+      2. Build full context: history, covered topics, remaining JD competencies, probe counts.
+      3. Call LLM agent with PROBE/TRANSITION decision prompt → structured JSON.
+      4. Fall back to deterministic heuristics if LLM unavailable.
+      5. Update topic tracking: probe_counts, covered_topics, current_topic.
+      6. Persist updated session state + agent decision log to DB.
+      7. Return next question + full decision metadata.
+    """
+    t0 = time.perf_counter()
+
+    if not interview_service.session_exists(req.session_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Interview session '{req.session_id}' not found. Sessions expire after server restart.",
+        )
+
+    if not req.answer or not req.answer.strip():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Answer text cannot be empty.",
+        )
+
+    try:
+        result = interview_service.process_respond(
+            session_id=req.session_id,
+            answer=req.answer.strip(),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+
+    latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+
+    # Persist updated session state to DB
+    session = interview_service.get_session(req.session_id)
+    if session and session.db_session_id:
+        try:
+            db_record = db.query(SessionHistory).filter(
+                SessionHistory.id == session.db_session_id
+            ).first()
+            if db_record:
+                db_record.history_data = session.to_history_data()
+                db.commit()
+        except Exception:
+            db.rollback()
+
+    # Build topic coverage lists for response
+    covered = session.covered_topics if session else []
+    remaining = result.get("topics_remaining", [])
+
+    return InterviewRespondResponse(
+        session_id=req.session_id,
+        question_number=session.question_count if session else 0,
+        question=result["question"],
+        decision=result["decision"],
+        reasoning=result["reasoning"],
+        answer_quality=result["answer_quality"],
+        probe_target=result.get("probe_target"),
+        topic_covered=result.get("topic_covered"),
+        next_topic=result.get("next_topic"),
+        topics_covered_so_far=covered,
+        topics_remaining=remaining,
+        is_complete=result["is_complete"],
+        latency_ms=latency_ms,
     )
 
 
