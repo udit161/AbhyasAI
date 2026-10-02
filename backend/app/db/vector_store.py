@@ -201,6 +201,8 @@ class VectorStoreClient:
             query_terms = set(tokenized_query)
             bm25_raw_scores = [float(len(query_terms.intersection(set(doc.content.lower().split())))) for doc in matching_docs]
 
+        # Clamp BM25 scores to >= 0 (BM25Okapi can emit negatives for short/mismatched queries)
+        bm25_raw_scores = [max(0.0, s) for s in bm25_raw_scores]
         max_bm25 = max(bm25_raw_scores) if (bm25_raw_scores and max(bm25_raw_scores) > 0) else 1.0
         norm_bm25_scores = [s / max_bm25 for s in bm25_raw_scores]
 

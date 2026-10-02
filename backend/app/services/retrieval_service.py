@@ -57,11 +57,13 @@ class RetrievalService:
         current_timestamp: Union[float, str],
         permitted_doc_ids: Optional[List[str]] = None,
         top_k: int = 5,
+        min_relevance_score: float = 0.0,
     ) -> List[Dict[str, Any]]:
         """
         Retrieves context chunks strictly constrained to video content watched up to current_timestamp
         (start_time >= 0 and end_time <= current_timestamp), while allowing retrieval from permitted
         supporting PDFs/PPTs without timestamp constraints.
+        Filters out low-relevance noise chunks below min_relevance_score.
         """
         timestamp_seconds = parse_timestamp_to_seconds(current_timestamp)
 
@@ -85,11 +87,14 @@ class RetrievalService:
         # Format retrieved results into structured grounding citations
         formatted_results = []
         for item in raw_results:
+            score = item.get("relevance_score", 0.0)
+            if score < min_relevance_score:
+                continue
+
             source_type = item.get("resource_type", "video")
             res_id = item.get("resource_id", video_id)
             title = item.get("title", "Resource Document")
             snippet = item.get("content", "")
-            score = item.get("relevance_score", 0.0)
 
             start_t = item.get("start_time")
             end_t = item.get("end_time")
