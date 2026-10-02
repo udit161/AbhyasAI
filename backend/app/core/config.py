@@ -64,6 +64,25 @@ class Settings(BaseSettings):
         default="abhyas_ai_vectors", description="Vector Index or Collection Name"
     )
 
+    # Hybrid Search Configuration
+    HYBRID_SEARCH_ALPHA: float = Field(
+        default=0.5,
+        ge=0.0,
+        le=1.0,
+        description="Weight alpha balancing dense vector similarity (alpha) vs BM25 keyword score (1-alpha)",
+    )
+
+    # Redis Cache Configuration
+    REDIS_HOST: str = Field(default="localhost", description="Redis host address")
+    REDIS_PORT: int = Field(default=6379, description="Redis port number")
+    REDIS_URL: Optional[str] = Field(
+        default="redis://localhost:6379/0", description="Redis connection URL string"
+    )
+    CACHE_TTL_SECONDS: int = Field(
+        default=3600, description="RAG query cache TTL in seconds (1 hour default)"
+    )
+
+
     # LLM Providers & API Keys
     DEFAULT_LLM_PROVIDER: str = Field(
         default="bedrock", description="Default LLM provider (bedrock, openai, anthropic, gemini)"

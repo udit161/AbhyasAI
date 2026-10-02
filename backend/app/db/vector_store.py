@@ -184,16 +184,48 @@ class VectorStoreClient:
 
             matching_docs.append(doc)
 
-        # Relevance scoring (keyword overlap + score calculation)
-        query_terms = set(filter_query.query_text.lower().split())
-        scored_results = []
-        for doc in matching_docs:
-            doc_terms = set(doc.content.lower().split())
-            score = len(query_terms.intersection(doc_terms))
-            scored_results.append((score, doc))
+        if not matching_docs:
+            return []
 
-        # Sort by relevance score descending
+        # Hybrid Search: Dense Vector Similarity + BM25 Keyword Search
+        alpha = getattr(settings, "HYBRID_SEARCH_ALPHA", 0.5)
+        tokenized_query = filter_query.query_text.lower().split()
+
+        # 1. BM25 Keyword Search Scoring
+        try:
+            from rank_bm25 import BM25Okapi
+            corpus = [doc.content.lower().split() for doc in matching_docs]
+            bm25 = BM25Okapi(corpus)
+            bm25_raw_scores = list(bm25.get_scores(tokenized_query))
+        except Exception:
+            query_terms = set(tokenized_query)
+            bm25_raw_scores = [float(len(query_terms.intersection(set(doc.content.lower().split())))) for doc in matching_docs]
+
+        max_bm25 = max(bm25_raw_scores) if (bm25_raw_scores and max(bm25_raw_scores) > 0) else 1.0
+        norm_bm25_scores = [s / max_bm25 for s in bm25_raw_scores]
+
+        # 2. Dense Vector Embedding Similarity Scoring
+        from app.services.embedding_service import embedding_service
+        query_vector = embedding_service.generate_embedding(filter_query.query_text)
+
+        vec_raw_scores = []
+        for doc in matching_docs:
+            doc_vector = doc.embedding or embedding_service.generate_embedding(doc.content)
+            sim = sum(q * d for q, d in zip(query_vector, doc_vector))
+            vec_raw_scores.append(max(0.0, sim))
+
+        max_vec = max(vec_raw_scores) if (vec_raw_scores and max(vec_raw_scores) > 0) else 1.0
+        norm_vec_scores = [v / max_vec for v in vec_raw_scores]
+
+        # 3. Hybrid Score Fusion (alpha * vector_score + (1-alpha) * bm25_score)
+        scored_results = []
+        for idx, doc in enumerate(matching_docs):
+            hybrid_score = (alpha * norm_vec_scores[idx]) + ((1.0 - alpha) * norm_bm25_scores[idx])
+            scored_results.append((round(hybrid_score, 4), doc))
+
+        # Sort by hybrid score descending
         scored_results.sort(key=lambda x: x[0], reverse=True)
+
 
         # Return top_k matching documents formatted with metadata
         results = []

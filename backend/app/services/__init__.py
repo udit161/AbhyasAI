@@ -1,5 +1,5 @@
 """
-Business logic services (LLM, RAG Retrieval, Ingestion, Document Processor, Mock Interview, Transcript Chunking, Embeddings).
+Business logic services (LLM, RAG Retrieval, Ingestion, Cache, Document Processor, Mock Interview, Transcript Chunking, Embeddings).
 """
 from app.services.llm_service import llm_service
 from app.services.retrieval_service import retrieval_service
@@ -8,6 +8,7 @@ from app.services.interview_service import interview_service
 from app.services.transcript_chunker import transcript_chunker, TranscriptChunker
 from app.services.embedding_service import embedding_service, EmbeddingService
 from app.services.document_processor import document_processor, DocumentProcessor
+from app.services.cache_service import cache_service, CacheService
 
 __all__ = [
     "llm_service",
@@ -20,4 +21,6 @@ __all__ = [
     "EmbeddingService",
     "document_processor",
     "DocumentProcessor",
+    "cache_service",
+    "CacheService",
 ]
