@@ -605,7 +605,7 @@ function spawnRain(i, seeded){
   RAIN.k[i] = stepsFor(RAIN.len[i], 3, 14);
   RAIN.seed[i] = rnd()*1000;
   RAIN.style[i] = rnd() < 0.74 ? 0 : (rnd() < 0.6 ? 1 : 2);
-  RAIN.pin[i] = rnd() < 0.24 ? 1 : 0;                 // 1 = falls in front of the figure
+  RAIN.pin[i] = 0;                                    // 0 = never falls in front of the figure
   if (seeded){
     RAIN.x[i] = rnd()*VW; RAIN.y[i] = rnd()*VH;       // fill the frame at boot
   } else {

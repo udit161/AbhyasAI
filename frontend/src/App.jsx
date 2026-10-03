@@ -14,7 +14,7 @@ export default function App() {
         <SparkBadge
           speed={0.40}
           particleAmount={0.05}
-          rainAmount={0.08}
+          rainAmount={0.02}
           turbulence={0.20}
           spread={0.85}
         />
