@@ -115,7 +115,7 @@ export default function WelcomePage({ onEnter }) {
           borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 24px 80px rgba(0,0,0,0.45)',
-          animation: 'slideUp 0.4s ease 0.2s both',
+          animation: 'slideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.2s both',
         }}>
 
           {/* ════ LEFT PANEL — branding ════ */}

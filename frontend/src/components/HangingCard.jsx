@@ -157,7 +157,7 @@ export default function HangingCard() {
 
   /* ── render ── */
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none', animation: 'dropIn 0.5s ease-out 0.4s both' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none', animation: 'dropIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both' }}>
 
       {/* ═══ SVG lanyard ═══ */}
       <svg

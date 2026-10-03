@@ -13,8 +13,8 @@ export default function App() {
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         <SparkBadge
           speed={0.40}
-          particleAmount={0.05}
-          rainAmount={0.02}
+          particleAmount={0.01}
+          rainAmount={0.004}
           turbulence={0.20}
           spread={0.85}
         />
