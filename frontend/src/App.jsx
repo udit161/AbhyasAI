@@ -12,11 +12,11 @@ export default function App() {
       {/* Full-viewport animated background — always visible */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         <SparkBadge
-          speed={1.00}
-          particleAmount={1.00}
-          rainAmount={1.00}
-          turbulence={1.00}
-          spread={1.00}
+          speed={0.40}
+          particleAmount={0.35}
+          rainAmount={0.15}
+          turbulence={0.30}
+          spread={0.80}
         />
       </div>
 

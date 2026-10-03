@@ -1,106 +1,36 @@
 import React, { useState } from 'react';
-import { BookOpen, Mic, Zap, ChevronRight, X, Mail, Lock, User } from 'lucide-react';
+import { BookOpen, Mic, Zap, ChevronRight, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import HangingCard from './HangingCard';
 
-/* ─── tiny modal for Login / Signup ─── */
-function AuthModal({ mode, onClose }) {
-  const isLogin = mode === 'login';
+/* ── Bitcount Grid Double font style (reused everywhere) ── */
+const BITCOUNT = {
+  fontFamily: '"Bitcount Grid Double", system-ui',
+  fontOpticalSizing: 'auto',
+  fontStyle: 'normal',
+  fontVariationSettings: '"slnt" 0, "CRSV" 0.5, "ELSH" 0, "ELXP" 0',
+};
 
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 100,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)',
-      animation: 'fadeIn 0.2s ease'
-    }}>
-      <div className="glass-panel" style={{
-        width: '100%', maxWidth: '400px', padding: '36px 32px',
-        position: 'relative', animation: 'slideUp 0.25s ease'
-      }}>
-        {/* close */}
-        <button
-          onClick={onClose}
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'transparent', color: 'var(--text-muted)' }}
-        >
-          <X size={18} />
-        </button>
-
-        {/* logo mark */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: '10px',
-            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Zap size={18} color="#fff" />
-          </div>
-          <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>AbhyasAI</span>
-        </div>
-
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '6px' }}>
-          {isLogin ? 'Welcome back' : 'Create account'}
-        </h2>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '28px' }}>
-          {isLogin ? 'Sign in to continue your learning journey.' : 'Start your personalised AI learning experience.'}
-        </p>
-
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
-          onSubmit={e => e.preventDefault()}>
-
-          {!isLogin && (
-            <InputField icon={<User size={15} />} placeholder="Full name" type="text" />
-          )}
-          <InputField icon={<Mail size={15} />} placeholder="Email address" type="email" />
-          <InputField icon={<Lock size={15} />} placeholder="Password" type="password" />
-
-          {isLogin && (
-            <div style={{ textAlign: 'right', marginTop: '-6px' }}>
-              <a href="#" style={{ fontSize: '0.78rem', color: 'var(--accent-blue)', textDecoration: 'none' }}>
-                Forgot password?
-              </a>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            style={{
-              marginTop: '8px',
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-              color: '#fff', padding: '12px', borderRadius: '10px',
-              fontWeight: 600, fontSize: '0.95rem',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              boxShadow: '0 4px 24px rgba(59,130,246,0.35)'
-            }}
-          >
-            {isLogin ? 'Sign In' : 'Get Started'} <ChevronRight size={16} />
-          </button>
-        </form>
-
-        <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <a href="#" style={{ color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}
-            onClick={e => { e.preventDefault(); onClose(isLogin ? 'signup' : 'login'); }}>
-            {isLogin ? 'Sign up' : 'Sign in'}
-          </a>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function InputField({ icon, placeholder, type }) {
+/* ─── reusable input ─── */
+function InputField({ icon, placeholder, type, id }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: '10px',
-      background: 'rgba(15,23,42,0.7)', border: '1px solid var(--border-color)',
-      borderRadius: '10px', padding: '11px 14px'
-    }}>
-      <span style={{ color: 'var(--text-muted)', flexShrink: 0 }}>{icon}</span>
+      background: 'rgba(255,255,255,0.05)',
+      border: '1px solid rgba(255,255,255,0.12)',
+      borderRadius: '10px', padding: '11px 14px',
+      transition: 'border-color 0.2s',
+    }}
+      onFocus={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.45)'}
+      onBlur={e  => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'}
+    >
+      <span style={{ color: 'rgba(255,255,255,0.4)', flexShrink: 0 }}>{icon}</span>
       <input
+        id={id}
         type={type}
         placeholder={placeholder}
         style={{
           background: 'transparent', border: 'none', outline: 'none',
-          color: 'var(--text-main)', fontSize: '0.88rem', width: '100%'
+          color: '#fff', fontSize: '0.88rem', width: '100%',
         }}
       />
     </div>
@@ -111,191 +41,213 @@ function InputField({ icon, placeholder, type }) {
 function FeaturePill({ icon, label }) {
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', gap: '7px',
-      background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)',
-      borderRadius: '999px', padding: '6px 14px', fontSize: '0.8rem',
-      color: 'var(--text-muted)'
+      display: 'flex', alignItems: 'center', gap: '8px',
+      background: 'rgba(255,255,255,0.05)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderRadius: '10px', padding: '9px 14px',
+      fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)',
     }}>
-      {icon}
-      <span>{label}</span>
+      <span style={{ color: 'rgba(255,255,255,0.75)', flexShrink: 0 }}>{icon}</span>
+      {label}
     </div>
   );
 }
 
-/* ─── main welcome page ─── */
+/* ─── main component ─── */
 export default function WelcomePage({ onEnter }) {
-  const [modal, setModal] = useState(null); // 'login' | 'signup' | null
-
-  const handleModalClose = (switchTo) => {
-    if (switchTo === 'login' || switchTo === 'signup') {
-      setModal(switchTo);
-    } else {
-      setModal(null);
-    }
-  };
+  const [mode, setMode] = useState('signup'); // 'signup' | 'login'
+  const isLogin = mode === 'login';
 
   return (
     <>
-      {/* ── hero section ── */}
+      {/* ── physics hanging card ── */}
+      <HangingCard />
+
+      {/* ── full-height centred wrapper ── */}
       <div style={{
         position: 'relative', zIndex: 10,
         minHeight: '100vh',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '24px'
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'flex-end',   /* push card to the right */
+        padding: '24px 5vw 24px 420px', /* left pad clears the shifted hanging card */
       }}>
 
-        {/* nav bar */}
-        <nav style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 40px',
-          background: 'rgba(15,23,42,0.55)',
-          backdropFilter: 'blur(14px)',
-          borderBottom: '1px solid var(--border-color)'
+        {/* ── split card ── */}
+        <div style={{
+          display: 'flex',
+          width: '100%', maxWidth: '900px',
+          minHeight: '560px',
+          /* very transparent glass */
+          background: 'rgba(15, 23, 42, 0.30)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.10)',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.45)',
+          animation: 'slideUp 0.4s ease',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: '8px',
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-              <Zap size={16} color="#fff" />
+
+          {/* ════ LEFT PANEL — branding ════ */}
+          <div style={{
+            flex: '1 1 50%',
+            padding: '48px 40px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            borderRight: '1px solid rgba(255,255,255,0.07)',
+          }}>
+
+
+            {/* centre content */}
+            <div>
+
+
+              <h1 style={{
+                ...BITCOUNT,
+                fontWeight: 700,
+                fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
+                lineHeight: 1.18,
+                color: '#ffffff',
+                textShadow: '0 0 40px rgba(255,255,255,0.45), 0 0 80px rgba(255,255,255,0.15)',
+                marginBottom: '16px',
+                letterSpacing: '0.5px',
+              }}>
+                Learn Smarter,<br />Not Harder
+              </h1>
+
+              <p style={{
+                fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.7, marginBottom: '32px',
+              }}>
+                Timestamp-aware AI tutoring + mock interview practice — all in one
+                beautiful environment.
+              </p>
+
+              {/* feature pills */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <FeaturePill icon={<BookOpen size={14} />} label="Context-aware Q&A" />
+                <FeaturePill icon={<Zap size={14} />} label="AI-generated Quizzes" />
+                <FeaturePill icon={<Mic size={14} />} label="Mock Interviews" />
+              </div>
             </div>
-            <span style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.3px' }}>AbhyasAI</span>
+
+            {/* dev shortcut */}
+            {onEnter && (
+              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '8px' }}>
+                Already set up?{' '}
+                <a href="#" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}
+                  onClick={e => { e.preventDefault(); onEnter(); }}>
+                  Go to app →
+                </a>
+              </p>
+            )}
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              id="nav-login-btn"
-              onClick={() => setModal('login')}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-main)', padding: '8px 20px',
-                borderRadius: '8px', fontSize: '0.85rem', fontWeight: 500
-              }}
-            >
-              Log In
-            </button>
-            <button
-              id="nav-signup-btn"
-              onClick={() => setModal('signup')}
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                color: '#fff', padding: '8px 20px',
-                borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600,
-                boxShadow: '0 2px 16px rgba(59,130,246,0.4)'
-              }}
-            >
-              Sign Up
-            </button>
-          </div>
-        </nav>
-
-        {/* hero card */}
-        <div className="glass-panel" style={{
-          maxWidth: '680px', width: '100%',
-          padding: '52px 48px',
-          textAlign: 'center',
-          boxShadow: '0 8px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)',
-          animation: 'slideUp 0.4s ease'
-        }}>
-          {/* badge */}
+          {/* ════ RIGHT PANEL — auth form ════ */}
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'linear-gradient(90deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))',
-            border: '1px solid rgba(139,92,246,0.35)',
-            borderRadius: '999px', padding: '4px 14px',
-            fontSize: '0.75rem', color: '#a78bfa', fontWeight: 500,
-            marginBottom: '28px', letterSpacing: '0.5px'
+            flex: '1 1 50%',
+            padding: '48px 40px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'center',
           }}>
-            <Zap size={12} /> AI-POWERED LEARNING
-          </div>
 
-          <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 3rem)',
-            fontWeight: 800, lineHeight: 1.15,
-            background: 'linear-gradient(135deg, #f8fafc 30%, #8b5cf6)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            marginBottom: '18px'
-          }}>
-            Learn Smarter,<br />Not Harder
-          </h1>
+            {/* tab switcher */}
+            <div style={{
+              display: 'flex', gap: '0',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              borderRadius: '10px', padding: '4px',
+              marginBottom: '32px',
+            }}>
+              {['signup', 'login'].map(m => (
+                <button
+                  key={m}
+                  id={`tab-${m}`}
+                  onClick={() => setMode(m)}
+                  style={{
+                    flex: 1, padding: '9px',
+                    borderRadius: '7px', fontSize: '0.85rem', fontWeight: 600,
+                    background: mode === m
+                      ? 'rgba(255,255,255,0.14)'
+                      : 'transparent',
+                    border: `1px solid ${mode === m ? 'rgba(255,255,255,0.35)' : 'transparent'}`,
+                    color: mode === m ? '#fff' : 'rgba(255,255,255,0.38)',
+                    boxShadow: mode === m ? '0 0 18px rgba(255,255,255,0.12), 0 2px 8px rgba(0,0,0,0.3)' : 'none',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {m === 'signup' ? 'Create Account' : 'Log In'}
+                </button>
+              ))}
+            </div>
 
-          <p style={{
-            fontSize: '1rem', color: 'var(--text-muted)',
-            lineHeight: 1.7, maxWidth: '480px', margin: '0 auto 36px'
-          }}>
-            AbhyasAI combines timestamp-aware AI tutoring with mock interview practice —
-            all inside a single, beautiful learning environment.
-          </p>
+            <h2 style={{ ...BITCOUNT, fontWeight: 700, fontSize: '1.5rem', marginBottom: '6px', letterSpacing: '0.3px' }}>
+              {isLogin ? 'Welcome back 👋' : 'Get started free'}
+            </h2>
+            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', marginBottom: '28px' }}>
+              {isLogin
+                ? 'Sign in to continue your learning journey.'
+                : 'No credit card required. Start learning in seconds.'}
+            </p>
 
-          {/* feature pills */}
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: '10px',
-            justifyContent: 'center', marginBottom: '40px'
-          }}>
-            <FeaturePill icon={<BookOpen size={13} />} label="Context-aware Q&A" />
-            <FeaturePill icon={<Zap size={13} />} label="AI-generated Quizzes" />
-            <FeaturePill icon={<Mic size={13} />} label="Mock Interviews" />
-          </div>
+            {/* form */}
+            <form style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+              onSubmit={e => e.preventDefault()}>
 
-          {/* CTA buttons */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button
-              id="hero-signup-btn"
-              onClick={() => setModal('signup')}
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                color: '#fff', padding: '14px 32px',
-                borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem',
-                display: 'flex', alignItems: 'center', gap: '8px',
-                boxShadow: '0 4px 24px rgba(59,130,246,0.4)'
-              }}
-            >
-              Get Started Free <ChevronRight size={16} />
-            </button>
-            <button
-              id="hero-login-btn"
-              onClick={() => setModal('login')}
-              style={{
-                background: 'rgba(255,255,255,0.07)',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-main)', padding: '14px 32px',
-                borderRadius: '12px', fontWeight: 600, fontSize: '0.95rem'
-              }}
-            >
-              Log In
-            </button>
-          </div>
+              {!isLogin && (
+                <InputField id="inp-name" icon={<User size={15} />} placeholder="Full name" type="text" />
+              )}
+              <InputField id="inp-email" icon={<Mail size={15} />} placeholder="Email address" type="email" />
+              <InputField id="inp-password" icon={<Lock size={15} />} placeholder="Password" type="password" />
 
-          {/* enter app link */}
-          {onEnter && (
-            <p style={{ marginTop: '24px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Already set up?{' '}
-              <a href="#" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}
-                onClick={e => { e.preventDefault(); onEnter(); }}>
-                Go to the app →
+              {isLogin && (
+                <div style={{ textAlign: 'right', marginTop: '-4px' }}>
+                  <a href="#" style={{ fontSize: '0.77rem', color: 'rgba(255,255,255,0.55)', textDecoration: 'none' }}>
+                    Forgot password?
+                  </a>
+                </div>
+              )}
+
+              <button
+                id="form-submit-btn"
+                type="submit"
+                style={{
+                  marginTop: '8px',
+                  background: 'rgba(255,255,255,0.92)',
+                  color: '#0a0a0f', padding: '13px',
+                  borderRadius: '10px', fontWeight: 700, fontSize: '0.95rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  boxShadow: '0 0 32px rgba(255,255,255,0.20), 0 4px 20px rgba(0,0,0,0.4)',
+                }}
+              >
+                {isLogin ? 'Sign In' : 'Create Account'}
+                <ArrowRight size={16} />
+              </button>
+            </form>
+
+            <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '0.81rem', color: 'rgba(255,255,255,0.35)' }}>
+              {isLogin ? "Don't have an account? " : 'Already have an account? '}
+              <a href="#"
+                style={{ color: 'rgba(255,255,255,0.65)', textDecoration: 'none', fontWeight: 600 }}
+                onClick={e => { e.preventDefault(); setMode(isLogin ? 'signup' : 'login'); }}>
+                {isLogin ? 'Sign up free' : 'Sign in'}
               </a>
             </p>
-          )}
+          </div>
         </div>
 
-        {/* subtle bottom glow */}
+        {/* ambient glow */}
         <div style={{
           position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '600px', height: '200px', pointerEvents: 'none',
-          background: 'radial-gradient(ellipse at center bottom, rgba(59,130,246,0.18) 0%, transparent 70%)'
+          width: '700px', height: '220px', pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at center bottom, rgba(255,255,255,0.06) 0%, transparent 70%)',
         }} />
       </div>
 
-      {/* auth modal */}
-      {modal && <AuthModal mode={modal} onClose={handleModalClose} />}
-
       <style>{`
-        @keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(24px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        input::placeholder { color: rgba(255,255,255,0.28); }
       `}</style>
     </>
   );
