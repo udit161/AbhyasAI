@@ -208,7 +208,7 @@ export default function WelcomePage({ onEnter }) {
             </div>
 
             <h2 style={{ ...BITCOUNT, fontWeight: 700, fontSize: '1.5rem', marginBottom: '6px', letterSpacing: '0.3px' }}>
-              {isLogin ? 'Welcome back 👋' : 'Get started free'}
+              {isLogin ? 'Welcome back' : 'Get started free'}
             </h2>
             <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', marginBottom: '28px' }}>
               {isLogin
