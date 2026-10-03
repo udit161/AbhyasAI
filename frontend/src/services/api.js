@@ -3,11 +3,12 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 export const askQuestion = async (videoId, currentTimestamp, question, allowedResourceIds = []) => {
-  const response = await axios.post(`${API_BASE_URL}/ask`, {
+  const response = await axios.post(`${API_BASE_URL}/chat`, {
+    user_id: "test_user_123",
     video_id: videoId,
     current_timestamp: currentTimestamp,
-    question: question,
-    allowed_resource_ids: allowedResourceIds
+    query: question,
+    permitted_doc_ids: allowedResourceIds
   });
   return response.data;
 };
