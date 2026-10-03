@@ -157,7 +157,7 @@ export default function HangingCard() {
 
   /* ── render ── */
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, pointerEvents: 'none', animation: 'dropIn 0.5s ease-out 0.4s both' }}>
 
       {/* ═══ SVG lanyard ═══ */}
       <svg
@@ -342,9 +342,9 @@ export default function HangingCard() {
 
       {/* keyframes for card entrance only */}
       <style>{`
-        @keyframes cardDrop {
-          from { opacity: 0; transform: rotate(-8deg) translateY(-60px); }
-          to   { opacity: 1; }
+        @keyframes dropIn {
+          from { opacity: 0; transform: translateY(-30px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>

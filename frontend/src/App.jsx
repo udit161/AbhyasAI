@@ -9,14 +9,14 @@ export default function App() {
 
   return (
     <>
-      {/* Full-viewport animated background — always visible */}
+      {/* ── rain background ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         <SparkBadge
-          speed={0.40}
+          speed={0.45}
           particleAmount={0.35}
-          rainAmount={0.15}
+          rainAmount={0.25}
           turbulence={0.30}
-          spread={0.80}
+          spread={0.85}
         />
       </div>
 

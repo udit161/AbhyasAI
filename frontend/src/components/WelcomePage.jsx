@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Mic, Zap, ChevronRight, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight } from 'lucide-react';
 import HangingCard from './HangingCard';
 
 /* ── Bitcount Grid Double font style (reused everywhere) ── */
@@ -37,18 +37,48 @@ function InputField({ icon, placeholder, type, id }) {
   );
 }
 
-/* ─── feature pill ─── */
-function FeaturePill({ icon, label }) {
+/* ─── artistic numbered feature row ─── */
+const FEATURES = [
+  { n: '01', title: 'Context-aware Q&A',    sub: 'Ask anything, grounded in what you watched' },
+  { n: '02', title: 'AI-generated Quizzes', sub: 'Test yourself at the perfect moment'          },
+  { n: '03', title: 'Mock Interviews',      sub: 'Practise until confidence becomes instinct'   },
+];
+
+function FeatureRow({ n, title, sub }) {
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', gap: '8px',
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '10px', padding: '9px 14px',
-      fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)',
+      display: 'flex', alignItems: 'flex-start', gap: '16px',
+      padding: '10px 0',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
     }}>
-      <span style={{ color: 'rgba(255,255,255,0.75)', flexShrink: 0 }}>{icon}</span>
-      {label}
+      {/* big dim counter */}
+      <span style={{
+        ...BITCOUNT,
+        fontWeight: 900,
+        fontSize: '1.6rem',
+        lineHeight: 1,
+        color: 'rgba(255,255,255,0.10)',
+        minWidth: '36px',
+        paddingTop: '2px',
+        userSelect: 'none',
+      }}>{n}</span>
+
+      <div>
+        <div style={{
+          ...BITCOUNT,
+          fontWeight: 700,
+          fontSize: '0.95rem',
+          color: 'rgba(255,255,255,0.85)',
+          letterSpacing: '0.2px',
+          marginBottom: '3px',
+        }}>{title}</div>
+        <div style={{
+          fontStyle: 'italic',
+          fontSize: '0.75rem',
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: '0.1px',
+        }}>{sub}</div>
+      </div>
     </div>
   );
 }
@@ -85,7 +115,7 @@ export default function WelcomePage({ onEnter }) {
           borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 24px 80px rgba(0,0,0,0.45)',
-          animation: 'slideUp 0.4s ease',
+          animation: 'slideUp 0.4s ease 0.2s both',
         }}>
 
           {/* ════ LEFT PANEL — branding ════ */}
@@ -122,11 +152,9 @@ export default function WelcomePage({ onEnter }) {
                 beautiful environment.
               </p>
 
-              {/* feature pills */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <FeaturePill icon={<BookOpen size={14} />} label="Context-aware Q&A" />
-                <FeaturePill icon={<Zap size={14} />} label="AI-generated Quizzes" />
-                <FeaturePill icon={<Mic size={14} />} label="Mock Interviews" />
+              {/* artistic feature list */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {FEATURES.map(f => <FeatureRow key={f.n} {...f} />)}
               </div>
             </div>
 
