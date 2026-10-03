@@ -128,7 +128,7 @@ export default function LearningAssistant({ currentTime, onOpenQuiz }) {
       </div>
 
       {/* Quick Prompts */}
-      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', padding: '8px 0' }}>
+      <div className="no-scrollbar" style={{ display: 'flex', gap: '6px', overflowX: 'auto', padding: '8px 0' }}>
         {samplePrompts.map((p, idx) => (
           <button
             key={idx}
