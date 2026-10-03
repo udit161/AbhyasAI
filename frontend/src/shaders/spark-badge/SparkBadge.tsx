@@ -57,7 +57,7 @@ export function SparkBadge({
   const [ready, setReady] = useState(false);
   const frameSource = sourceForVariant(sourceUrl, variant);
   const safeSpeed = clamp(speed, 0, 2);
-  const safeParticleAmount = clamp(particleAmount, 0.35, 1.4);
+  const safeParticleAmount = clamp(particleAmount, 0, 1.4);
   const safeRainAmount = clamp(rainAmount, 0, 1.5);
   const safeTurbulence = clamp(turbulence, 0, 2);
   const safeSpread = clamp(spread, 0.5, 1.75);
