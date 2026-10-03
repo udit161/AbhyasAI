@@ -331,15 +331,17 @@ export default function VideoPlayer() {
         pointerEvents: 'auto',
       }}>
         
-        {/* Tab Switcher */}
-        <div style={{
-          display: 'flex', gap: '6px',
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '16px', padding: '6px',
-          backdropFilter: 'blur(20px)',
-          width: 'fit-content'
-        }}>
+        {/* Tab Switcher & Abstract Logo Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          {/* Tab Switcher */}
+          <div style={{
+            display: 'flex', gap: '6px',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '16px', padding: '6px',
+            backdropFilter: 'blur(20px)',
+            width: 'fit-content'
+          }}>
           <button
             onClick={() => setRightTab('assistant')}
             style={{
@@ -364,6 +366,45 @@ export default function VideoPlayer() {
           >
             Transcript
           </button>
+          </div>
+
+          {/* Abstract Floating Logo */}
+          <div style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '150px',
+            height: '56px',
+            animation: 'floatBob 6s ease-in-out infinite',
+          }}>
+            {/* Morphing Abstract Blob Background */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02))',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              animation: 'morphShape 8s ease-in-out infinite',
+              zIndex: 1,
+              backdropFilter: 'blur(8px)',
+            }} />
+            
+            {/* The Logo Image */}
+            <img 
+              src="/favicon.png" 
+              alt="AbhyasAI Logo" 
+              style={{
+                position: 'relative',
+                zIndex: 2,
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                mixBlendMode: 'screen',
+                padding: '10px'
+              }} 
+            />
+          </div>
         </div>
 
         {/* Content Area */}
@@ -387,6 +428,18 @@ export default function VideoPlayer() {
         </div>
       </div>
 
+      {/* Abstract Logo Animations */}
+      <style>{`
+        @keyframes morphShape {
+          0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+          34% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+          67% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+        }
+        @keyframes floatBob {
+          0%, 100% { transform: translateY(0) rotate(-2deg); }
+          50% { transform: translateY(-12px) rotate(4deg); }
+        }
+      `}</style>
     </div>
   );
 }
