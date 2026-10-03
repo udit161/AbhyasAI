@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import LearningAssistant from '../assistant/LearningAssistant';
+import TranscriptView from './TranscriptView';
 
 const TOTAL_DURATION = 3600; // 60:00 in seconds
 
@@ -13,6 +15,7 @@ export default function VideoPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(null); // 'play' | 'bar' | null
+  const [rightTab, setRightTab] = useState('assistant'); // 'assistant' | 'transcript'
   const intervalRef = useRef(null);
   const progressRef = useRef(null);
 
@@ -57,13 +60,14 @@ export default function VideoPlayer() {
       position: 'fixed',
       inset: 0,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'stretch', /* stretch to match heights */
       justifyContent: 'flex-start',
-      padding: '0 0 0 48px',
+      padding: '48px',
+      gap: '40px', /* space between video and assistant */
       pointerEvents: 'none',
       zIndex: 10,
     }}>
-      {/* Glass card — half the screen wide */}
+      {/* ── Left Column: Video Player ── */}
       <div style={{
         width: '48vw',
         maxWidth: 780,
@@ -316,6 +320,73 @@ export default function VideoPlayer() {
           </div>
         </div>
       </div>
+
+      {/* ── Right Column: AI Assistant / Transcript ── */}
+      <div style={{
+        flex: 1,
+        maxWidth: 580,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+        pointerEvents: 'auto',
+      }}>
+        
+        {/* Tab Switcher */}
+        <div style={{
+          display: 'flex', gap: '6px',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '16px', padding: '6px',
+          backdropFilter: 'blur(20px)',
+          width: 'fit-content'
+        }}>
+          <button
+            onClick={() => setRightTab('assistant')}
+            style={{
+              padding: '8px 20px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600,
+              background: rightTab === 'assistant' ? 'rgba(255,255,255,0.15)' : 'transparent',
+              color: rightTab === 'assistant' ? '#fff' : 'rgba(255,255,255,0.5)',
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: rightTab === 'assistant' ? '0 2px 12px rgba(0,0,0,0.2)' : 'none'
+            }}
+          >
+            AI Assistant
+          </button>
+          <button
+            onClick={() => setRightTab('transcript')}
+            style={{
+              padding: '8px 20px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600,
+              background: rightTab === 'transcript' ? 'rgba(255,255,255,0.15)' : 'transparent',
+              color: rightTab === 'transcript' ? '#fff' : 'rgba(255,255,255,0.5)',
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: rightTab === 'transcript' ? '0 2px 12px rgba(0,0,0,0.2)' : 'none'
+            }}
+          >
+            Transcript
+          </button>
+        </div>
+
+        {/* Content Area */}
+        <div style={{
+          flex: 1,
+          borderRadius: 28,
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          boxShadow: '0 8px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          {rightTab === 'assistant' ? (
+            <LearningAssistant currentTime={currentTime} onOpenQuiz={() => console.log('quiz')} />
+          ) : (
+            <TranscriptView currentTime={currentTime} onSeek={setCurrentTime} />
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }

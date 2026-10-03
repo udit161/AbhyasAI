@@ -69,7 +69,20 @@ export default function LearningAssistant({ currentTime, onOpenQuiz }) {
         </div>
         <button
           onClick={onOpenQuiz}
-          style={{ background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', color: '#fff', padding: '6px 12px', borderRadius: '6px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+          style={{ 
+            background: 'rgba(255,255,255,0.92)', 
+            color: '#0a0a0f', 
+            padding: '6px 14px', 
+            borderRadius: '8px', 
+            fontSize: '0.8rem', 
+            fontWeight: 600,
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px',
+            boxShadow: '0 0 16px rgba(255,255,255,0.25)',
+            border: 'none',
+            cursor: 'pointer'
+          }}
         >
           <Zap size={14} /> Generate Quiz
         </button>
