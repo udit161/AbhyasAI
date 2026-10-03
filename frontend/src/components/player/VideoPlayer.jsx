@@ -371,12 +371,14 @@ export default function VideoPlayer() {
           {/* Abstract Floating Logo */}
           <div style={{
             position: 'relative',
+            top: '-20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '150px',
-            height: '56px',
+            width: '192px',
+            height: '88px',
             animation: 'floatBob 6s ease-in-out infinite',
+            marginBottom: '-20px', // Prevent the shifted height from pushing content down
           }}>
             {/* Morphing Abstract Blob Background */}
             <div style={{
@@ -397,11 +399,10 @@ export default function VideoPlayer() {
               style={{
                 position: 'relative',
                 zIndex: 2,
-                width: '100%',
-                height: '100%',
+                width: '90%',
+                height: '90%',
                 objectFit: 'contain',
                 mixBlendMode: 'screen',
-                padding: '10px'
               }} 
             />
           </div>

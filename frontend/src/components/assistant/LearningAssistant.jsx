@@ -161,9 +161,11 @@ export default function LearningAssistant({ currentTime, onOpenQuiz }) {
         <button
           type="submit"
           disabled={loading}
-          style={{ background: 'var(--accent-blue)', color: '#fff', padding: '10px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#111', padding: '10px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
         >
-          <Send size={16} />
+          <Send size={16} color="#000" />
         </button>
       </form>
     </div>
