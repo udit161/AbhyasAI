@@ -9,6 +9,23 @@ Production-oriented, timestamp-aware learning assistant integrated with video le
 - **Data & Knowledge Layer**: Vector database & hybrid retriever with metadata-based timestamp range filtering (00:00 to current player position).
 - **Evaluation Suite**: Benchmark tools testing timestamp boundary compliance, citation grounding accuracy, response latency, and refusal accuracy.
 
+## Tech Stack
+
+### Frontend
+- **Framework**: React.js 
+- **Build Tool**: Vite
+- **Key Dependencies**: `react`, `lucide-react` (for UI icons), `axios` (for API requests)
+
+### Backend
+- **Framework**: Python with FastAPI
+- **Server**: Uvicorn
+- **ORM / Data Validation**: SQLAlchemy, Pydantic
+- **Other Utilities**: `pypdf`, `python-pptx` (document processing), `redis` (caching), `rank-bm25` (search ranking)
+
+### Database & Infrastructure
+- **Database**: SQLite
+- **Containerization**: Docker & Docker Compose
+
 ## Project Structure
 
 ```

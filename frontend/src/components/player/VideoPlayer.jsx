@@ -18,6 +18,16 @@ export default function VideoPlayer() {
   const [rightTab, setRightTab] = useState('assistant'); // 'assistant' | 'transcript'
   const intervalRef = useRef(null);
   const progressRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [videoSrc, setVideoSrc] = useState(null);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setVideoSrc(url);
+    }
+  };
 
   const tick = useCallback(() => {
     setCurrentTime(t => {
@@ -93,43 +103,94 @@ export default function VideoPlayer() {
           justifyContent: 'center',
           overflow: 'hidden',
         }}>
-          {/* Simulated lecture content */}
-          <div style={{ textAlign: 'center', padding: 32 }}>
-            <div style={{
-              fontSize: 11,
-              letterSpacing: '0.18em',
-              color: 'rgba(255,255,255,0.35)',
-              fontFamily: 'ui-monospace, monospace',
-              marginBottom: 12,
-              textTransform: 'uppercase',
-            }}>
-              Machine Learning · System Design
+          {videoSrc ? (
+            <video 
+              src={videoSrc}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              controls
+            />
+          ) : (
+            <div style={{ textAlign: 'center', padding: 32 }}>
+              {/* Simulated lecture content */}
+              <div style={{
+                fontSize: 11,
+                letterSpacing: '0.18em',
+                color: 'rgba(255,255,255,0.35)',
+                fontFamily: 'ui-monospace, monospace',
+                marginBottom: 12,
+                textTransform: 'uppercase',
+              }}>
+                Machine Learning · System Design
+              </div>
+              <div style={{
+                fontSize: 22,
+                fontWeight: 600,
+                color: 'rgba(255,255,255,0.85)',
+                letterSpacing: '-0.01em',
+                lineHeight: 1.3,
+              }}>
+                Sample Video Lecture
+              </div>
+              <div style={{
+                marginTop: 18,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 14px',
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                fontSize: 12,
+                color: 'rgba(255,255,255,0.5)',
+                fontFamily: 'ui-monospace, monospace',
+              }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: isPlaying ? '#4ade80' : 'rgba(255,255,255,0.3)', display: 'inline-block', boxShadow: isPlaying ? '0 0 6px #4ade80' : 'none', transition: 'all 0.3s' }} />
+                {isPlaying ? 'Playing' : 'Paused'}
+              </div>
             </div>
-            <div style={{
-              fontSize: 22,
-              fontWeight: 600,
-              color: 'rgba(255,255,255,0.85)',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.3,
-            }}>
-              Sample Video Lecture
-            </div>
-            <div style={{
-              marginTop: 18,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 14px',
-              borderRadius: 999,
-              background: 'rgba(255,255,255,0.07)',
-              border: '1px solid rgba(255,255,255,0.12)',
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.5)',
-              fontFamily: 'ui-monospace, monospace',
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: isPlaying ? '#4ade80' : 'rgba(255,255,255,0.3)', display: 'inline-block', boxShadow: isPlaying ? '0 0 6px #4ade80' : 'none', transition: 'all 0.3s' }} />
-              {isPlaying ? 'Playing' : 'Paused'}
-            </div>
+          )}
+
+          {/* Upload Button — top right */}
+          <div style={{
+            position: 'absolute',
+            top: 14,
+            right: 16,
+            zIndex: 20
+          }}>
+            <input 
+              type="file" 
+              accept="video/*" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleFileUpload} 
+            />
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 14px',
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                backdropFilter: 'blur(12px)',
+                fontSize: 12,
+                fontWeight: 600,
+                color: '#fff',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload Video
+            </button>
           </div>
 
           {/* Timestamp chip — top left */}
