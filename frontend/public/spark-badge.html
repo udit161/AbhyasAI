@@ -382,46 +382,16 @@ function buildMasks(){
     }
   })();
 
-  /* ---- the window carries the Codex wordmark. Small type dissolves at
-         ember scale, so the letters use a compact authored single-line
-         alphabet with enough room to stay legible through the particle pass. ---- */
-  const GLYPH_WIDTHS = { C: 0.52, o: 0.44, d: 0.48, e: 0.44, x: 0.42 };
-  const glyph = (ch, x, y, h) => {
-    const w = h * GLYPH_WIDTHS[ch];
-    ge.strokeStyle = W2G('edition');
-    both(c => {
-      c.beginPath();
-      if (ch === 'C') {
-        c.moveTo(x+w*0.91, y+h*0.14);
-        c.bezierCurveTo(x+w*0.72, y-h*0.01, x+w*0.22, y-h*0.02, x+w*0.10, y+h*0.49);
-        c.bezierCurveTo(x+w*0.00, y+h*0.94, x+w*0.55, y+h*1.10, x+w*0.93, y+h*0.84);
-      } else if (ch === 'o') {
-        c.ellipse(x+w*0.50, y+h*0.63, w*0.43, h*0.35, 0, 0, TAU);
-      } else if (ch === 'd') {
-        c.ellipse(x+w*0.42, y+h*0.64, w*0.35, h*0.34, 0, 0, TAU);
-        c.moveTo(x+w*0.77, y);
-        c.lineTo(x+w*0.77, y+h*0.98);
-      } else if (ch === 'e') {
-        c.moveTo(x+w*0.91, y+h*0.62);
-        c.lineTo(x+w*0.10, y+h*0.62);
-        c.bezierCurveTo(x+w*0.13, y+h*0.25, x+w*0.84, y+h*0.18, x+w*0.88, y+h*0.57);
-        c.bezierCurveTo(x+w*0.94, y+h*0.94, x+w*0.32, y+h*1.08, x+w*0.12, y+h*0.82);
-      } else if (ch === 'x') {
-        c.moveTo(x+w*0.08, y+h*0.30);
-        c.lineTo(x+w*0.92, y+h*0.98);
-        c.moveTo(x+w*0.92, y+h*0.30);
-        c.lineTo(x+w*0.08, y+h*0.98);
-      }
-      c.stroke();
-    });
-    return w;
-  };
+  /* ---- the window carries the ABHYAS AI wordmark. ---- */
   (() => {
-    const str = 'Codex', h = 0.087*S, gap = h*0.11, cx = 0.500*S, cy = 0.512*S;
-    let tot = 0; for (const ch of str) tot += h*GLYPH_WIDTHS[ch] + gap; tot -= gap;
+    const str = 'ABHYAS AI', h = 0.087*S;
     gm.lineWidth = 0.0068*S; ge.lineWidth = 0.019*S;
-    let x = cx - tot/2; const y = cy - h/2;
-    for (const ch of str) x += glyph(ch, x, y, h) + gap;
+    ge.strokeStyle = W2G('edition');
+    gm.font = `bold ${h}px monospace`;
+    ge.font = `bold ${h}px monospace`;
+    gm.textAlign = 'center'; ge.textAlign = 'center';
+    gm.textBaseline = 'middle'; ge.textBaseline = 'middle';
+    both(c => c.strokeText(str, 0.500*S, 0.512*S));
   })();
 
   gm.restore(); ge.restore();

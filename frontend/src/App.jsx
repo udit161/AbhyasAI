@@ -12,10 +12,10 @@ export default function App() {
       {/* ── rain background ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }}>
         <SparkBadge
-          speed={0.40}
-          particleAmount={0.01}
-          rainAmount={0.004}
-          turbulence={0.20}
+          speed={0.80}
+          particleAmount={0.50}
+          rainAmount={0.20}
+          turbulence={0.40}
           spread={0.85}
         />
       </div>
